@@ -1,0 +1,7 @@
+[project]
+org-name = "laf"
+version = "0.1.0"
+authors = ["lafernando"]
+keywords = ["amazon", "stepfunctions"]
+repository = "https://github.com/lafernando/module-aws.stepfuncs"
+license = ["Apache-2.0"]
