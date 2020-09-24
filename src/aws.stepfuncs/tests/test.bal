@@ -27,8 +27,8 @@ Client stepfuncsClient = new(config);
 
 @test:Config {}
 function testListStateMachines() returns @tainted error? {
-    string taskToken = "AAAAKgAAAAIAAAAAAAAAAShYmJk12R4Wf8bQm1l62o3ixKi9b2bkPEC9Zc4fAbBDSk+dNvFMgtEED20ZE1Kl31tZoTHB7xrZncglyztlpbn8zXt33pREe47JdNErDXP9OTT9NobokRd5c4TONpY0qluloaUW55hhuRPDctBSB+oYMRa/IxajulAiNCH58nrNENVOff1KfHqatw3/9RnWuA6uL56RHSs5+yAQaEg2/n7tzmrF30gSxeKHeoGaPiSKYaSyfwHbUXLgsmvzUkjxmIVPybXCGAkRmFancgZwFQohfq86NuffjWCjjU+5VNY+vuT6r6dJ+HOFX6S5W9Geaj5pVdzfz40lQGOYDvej6herx5dgfgea9lMz/lPbzDE8fygRryNcJa6N5bAK4Cdn4KlhcpoJg66AMdNeUKINVJfmO+G6HEg8OIe8GCF1nky4FzahRZCvGrt/9zOq4uC36zm2soa7TlJMXEE/K8mX3oB0txDfgPLqgtd0FElCQkA5wqbP8+83dZcRuQugFk1UKzO1BQ/QhoXZfCZ8ZhrEsYEXwnbNz8mKWA0foj4Mkx3uz/5gIp11HgNcq5mXCda+m0zUVcrZFxVoNNZPX+URRaI=";
-    check stepfuncsClient->sendTaskFailure("c1", "e1", taskToken);
+    string taskToken = "AAAAKgAAAAIAAAAAAAAAAZdtO/NSd42ZMVMLKjH2Dw+CD+ap17EA8k2j1PHqYrW60KSdG4FMoBih+a06D7m0RNcDQ3XUOUmzD+tSkQJDiNw1eedQjsRKtJR162RktwFtCEbtAVkHPo+ig0FNdSgWoYs6ykWA1X6FEX5lWkKYrDw1PTXgfH9FzPiPDgASmtD4HnLvUUTVnStsALDQvhUc+oXpsIj6rmQO/Q4frNbkAQ850xjBkZOUEaNAwzVCjZH1n5CUxRMkIlDUe22dU5S57u0J3nMQg2NqbWj+vZvC/YFMmiSbqgSepI0HxOFFKjO9oWKSQxiQvngpWyLednY6t9uxxJm/CJkP3pKY674nNIzMTgHian8ob1XJvM86HcsKLB31Rg3cpPTD/1fL0qNUO+O36gl/GtD74u8e5XxF5J7nHa7yU2zsgOgHa52HqXWIB2EH6ZTJL6JErHc1sHdYnqvZzBl2dmJ+ipeaai5UF0Upvtr3AsyUt1mWOMs/fn2INfrPKEeBx5U3ZIcNeOmG4IRAk1xdV3rHFCbZV/hsj5GV1x11crbpFp3UCyoGOej0cX2/Xx2ewPhEDKdGlqOBWzX9hYRRUBZQ+cvhMGNSuHI=";
+    check stepfuncsClient->sendTaskHeartbeat(taskToken);
     var x = check stepfuncsClient->listStateMachines();
     io:println("X:", x);
 }

@@ -70,6 +70,12 @@ public type Client client object {
                                   payload.toJsonString());
     }
 
+    public remote function sendTaskHeartbeat(string taskToken) returns @tainted error? {
+        json payload = { taskToken: taskToken };
+        _ = check self.execAction(self.accessKey, self.secretKey, self.region, "SendTaskHeartbeat",
+                                  payload.toJsonString());
+    }
+
     public remote function sendTaskFailure(string cause, string err, string taskToken) returns @tainted error? {
         json payload = { cause: cause, 'error: err, taskToken: taskToken };
         _ = check self.execAction(self.accessKey, self.secretKey, self.region, "SendTaskFailure",
