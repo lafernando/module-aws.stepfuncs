@@ -65,7 +65,7 @@ public type Client client object {
     }
 
     public remote function sendTaskSuccess(json output, string taskToken) returns @tainted error? {
-        json payload = { output: output, taskToken: taskToken };
+        json payload = { output: output.toJsonString(), taskToken: taskToken };
         _ = check self.execAction(self.accessKey, self.secretKey, self.region, "SendTaskSuccess",
                                   payload.toJsonString());
     }
@@ -76,7 +76,7 @@ public type Client client object {
                                   payload.toJsonString());
     }
 
-    public remote function sendTaskFailure(string cause, string err, string taskToken) returns @tainted error? {
+    public remote function sendTaskFailure(string? cause, string? err, string taskToken) returns @tainted error? {
         json payload = { cause: cause, 'error: err, taskToken: taskToken };
         _ = check self.execAction(self.accessKey, self.secretKey, self.region, "SendTaskFailure",
                                   payload.toJsonString());
@@ -85,6 +85,20 @@ public type Client client object {
     public remote function listStateMachines() returns @tainted json|error? {
         json payload = { };
         return check self.execAction(self.accessKey, self.secretKey, self.region, "ListStateMachines",
+                                     payload.toJsonString());
+    }
+
+    public remote function startExecution(json input, string? name, 
+                                          string stateMachineArn, string? traceHeader) returns @tainted json|error? {
+        json payload = { input: input.toJsonString(), name: name, stateMachineArn: stateMachineArn, 
+                         traceHeader: traceHeader };
+        return check self.execAction(self.accessKey, self.secretKey, self.region, "StartExecution",
+                                     payload.toJsonString());
+    }
+
+    public remote function stopExecution(string? cause, string? err, string executionArn) returns @tainted json|error? {
+        json payload = { cause: cause, 'error: err, executionArn: executionArn };
+        return check self.execAction(self.accessKey, self.secretKey, self.region, "StopExecution",
                                      payload.toJsonString());
     }
 
