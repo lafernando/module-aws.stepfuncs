@@ -18,9 +18,10 @@ import ballerina/time;
 import wso2/amazoncommons;
 
 # Object to initialize the connection with AWS Step Functions Service.
+# The operations mirror the API at https://docs.aws.amazon.com/step-functions/latest/apireference/API_Operations.html. 
 #
-# + accessKey - The Amazon API access key
-# + secretKey - The Amazon API secret key
+# + accessKey - The AWS API access key
+# + secretKey - The AWS API secret key
 public type Client client object {
 
     http:Client clientEp;
@@ -36,7 +37,7 @@ public type Client client object {
     }
 
     function execAction(string accessKey, string secretKey, string region, string action,
-                            string payload) returns @tainted string|error? {
+                        string payload) returns string|error {
         string host = STEPFUNCS_SERVICE_NAME + "." + region + "." + amazoncommons:AMAZON_HOST;
         time:Time time = check time:toTimeZone(time:currentTime(), "GMT");
         string amzdate = amazoncommons:generateAmzdate(time);
@@ -57,58 +58,68 @@ public type Client client object {
             request.setHeader(k, v);
         }
         var httpResponse = check self.clientEp->post("/", request);
-        if httpResponse.statusCode != http:STATUS_OK {
-            string err = <@untainted> check httpResponse.getTextPayload();
-            return error(err);
+        var result = <@untainted> httpResponse.getTextPayload();
+        if result is error {
+            return result;
+        } else {
+            if httpResponse.statusCode != http:STATUS_OK {
+                return error(result);
+            } else {
+                return result;
+            }
         }
-        return <@untainted> check httpResponse.getTextPayload();
     }
 
-    public remote function sendTaskSuccess(json output, string taskToken) returns @tainted error? {
+    public remote function sendTaskSuccess(string taskToken, json output) returns error? {
         json payload = { output: output.toJsonString(), taskToken: taskToken };
         _ = check self.execAction(self.accessKey, self.secretKey, self.region, "SendTaskSuccess",
                                   payload.toJsonString());
     }
 
-    public remote function sendTaskHeartbeat(string taskToken) returns @tainted error? {
+    public remote function sendTaskHeartbeat(string taskToken) returns error? {
         json payload = { taskToken: taskToken };
         _ = check self.execAction(self.accessKey, self.secretKey, self.region, "SendTaskHeartbeat",
                                   payload.toJsonString());
     }
 
-    public remote function sendTaskFailure(string? cause, string? err, string taskToken) returns @tainted error? {
+    public remote function sendTaskFailure(string taskToken, string? cause = (), string? err = ()) returns error? {
         json payload = { cause: cause, 'error: err, taskToken: taskToken };
         _ = check self.execAction(self.accessKey, self.secretKey, self.region, "SendTaskFailure",
                                   payload.toJsonString());
     }
 
-    public remote function listStateMachines() returns @tainted json|error? {
+    public remote function listStateMachines() returns StateMachineListItem[]|error {
         json payload = { };
-        return check self.execAction(self.accessKey, self.secretKey, self.region, "ListStateMachines",
-                                     payload.toJsonString());
+        string result = check self.execAction(self.accessKey, self.secretKey, self.region, "ListStateMachines",
+                                            payload.toJsonString());
+        json jr = check result.fromJsonString();
+        return StateMachineListItem[].constructFrom(check jr.stateMachines);
     }
 
-    public remote function startExecution(json input, string? name, 
-                                          string stateMachineArn, string? traceHeader) returns @tainted json|error? {
+    public remote function startExecution(string stateMachineArn, json input, string? name = (), 
+                                          string? traceHeader = ()) returns StartExecResult|error {
         json payload = { input: input.toJsonString(), name: name, stateMachineArn: stateMachineArn, 
                          traceHeader: traceHeader };
-        return check self.execAction(self.accessKey, self.secretKey, self.region, "StartExecution",
-                                     payload.toJsonString());
+        string result = check self.execAction(self.accessKey, self.secretKey, self.region, "StartExecution",
+                                              payload.toJsonString());
+        return StartExecResult.constructFrom(check result.fromJsonString());
     }
 
-    public remote function stopExecution(string? cause, string? err, string executionArn) returns @tainted json|error? {
+    public remote function stopExecution(string executionArn, string? cause = (), string? err = ()) 
+                                         returns StopExecResult|error {
         json payload = { cause: cause, 'error: err, executionArn: executionArn };
-        return check self.execAction(self.accessKey, self.secretKey, self.region, "StopExecution",
-                                     payload.toJsonString());
+        string result = check self.execAction(self.accessKey, self.secretKey, self.region, "StopExecution",
+                                              payload.toJsonString());
+        return StopExecResult.constructFrom(check result.fromJsonString());                                        
     }
 
 };
 
 # AWS Step Functions Service configuration.
 #
-# + accessKey - The Amazon access key
-# + secretKey - The Amazon secret key
-# + region    - The Amazon region
+# + accessKey - The AWS access key
+# + secretKey - The AWS secret key
+# + region    - The AWS region
 public type Configuration record {
     string accessKey;
     string secretKey;
