@@ -56,18 +56,6 @@ stepfuncs:Configuration config = {
 
 stepfuncs:Client stepfuncsClient = new(config);
 
-import ballerina/config;
-import laf/aws.stepfuncs;
-import ballerina/io;
-
-stepfuncs:Configuration config = {
-    accessKey: config:getAsString("ACCESS_KEY"),
-    secretKey: config:getAsString("SECRET_KEY"),
-    region: "us-west-1"
-};
-
-stepfuncs:Client stepfuncsClient = new(config);
-
 public function main() returns error? {
     stepfuncs:StateMachineListItem[] sms = check stepfuncsClient->listStateMachines();
     io:println("State Machines:", sms);

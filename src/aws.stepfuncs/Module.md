@@ -1,4 +1,4 @@
-Connects to AWS Step Functions service.
+Connects to AWS Step Functions service. The operations mirror the API at https://docs.aws.amazon.com/step-functions/latest/apireference/API_Operations.html.
 
 # Module Overview
 
@@ -10,18 +10,6 @@ Connects to AWS Step Functions service.
 ## Sample
 
 ```ballerina
-import ballerina/config;
-import laf/aws.stepfuncs;
-import ballerina/io;
-
-stepfuncs:Configuration config = {
-    accessKey: config:getAsString("ACCESS_KEY"),
-    secretKey: config:getAsString("SECRET_KEY"),
-    region: "us-west-1"
-};
-
-stepfuncs:Client stepfuncsClient = new(config);
-
 import ballerina/config;
 import laf/aws.stepfuncs;
 import ballerina/io;
